@@ -26,18 +26,37 @@ Grid.prototype.init = function () {
 	return cells;
 };
 
-// Given a direction and start cell to traverse the grid
+// Given a direction vector and start cell to traverse the grid
 // return the traversal list
-Grid.prototype.traverse = function(startPos, direction, numSteps) {
+Grid.prototype.traverse = function(startPos, directionVector, numSteps) {
 	// 0: UP 1: RIGHT 2: DOWN 3: LEFT
 	var row, col;
 	var traversal = [];
 	for ( var i = 0; i < numSteps; i++ ) {
-		row = startPos.row + i * direction.row;
-		col = startPos.col + i * direction.col;
+		row = startPos.row + i * directionVector.row;
+		col = startPos.col + i * directionVector.col;
 		traversal.push(this.cells[row][col] ? this.cells[row][col].getValue() : null);
 	}
 	return traversal;
+};
+
+Grid.prototype.traverseAndSetTile = function(startPos, directionVector, numSteps, mergedLine) {
+	// 0: UP 1: RIGHT 2: DOWN 3: LEFT
+	var row, col;
+	var traversal = [];
+	var position;
+	var value;
+	var tile;
+	for ( var i = 0; i < numSteps; i++ ) {
+		row = startPos.row + i * directionVector.row;
+		col = startPos.col + i * directionVector.col;
+		if (mergedLine[i] !== null) {
+			position = {row: row, col: col};
+			value = merged[i];
+			tile = new Tile(position, value);
+			this.setTile(tile);
+		}
+	}
 };
 
 // Find an available random cell position
@@ -99,7 +118,7 @@ Grid.prototype.serialize = function () {
 function testGrid() {
 	var grid = new Grid(3, 4);
 	var size = {width: 3, height: 4};
-	var game = new twentyFortyEight(size);
+	var game = new TwentyFortyEight(size);
 	var suite = new TestSuite();
 	// initialize the grid with proper value
 	var number = 1;

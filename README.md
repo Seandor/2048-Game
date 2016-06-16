@@ -8,3 +8,5 @@ Develop note:
 
  - add icon
  - using canvas to draw the game board.
+ - null + null === 0
+ - have to understand callback function 
