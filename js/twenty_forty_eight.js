@@ -80,6 +80,7 @@ TwentyFortyEight.prototype.move = function (direction) {
 	if (merged) {
 		this.newTile();
 	}
+	return merged;
 };
 
 // return a merged list
@@ -152,6 +153,18 @@ TwentyFortyEight.prototype.getTileIndices = function (direction) {
 	return tileIndices[direction];
 };
 
+TwentyFortyEight.prototype.isEqualArray = function (arr1, arr2) {
+	if (arr1.length !== arr2.length) {
+		return false;
+	}
+	for (var idx = 0; idx < arr1.length; idx++) {
+		if (arr1[idx] !== arr2[idx]) {
+			return false;
+		}
+	}
+	return true;
+};
+
 TwentyFortyEight.prototype.serialize = function () {
 	return this.grid.serialize();
 };
@@ -160,6 +173,8 @@ function testGame() {
 	var size = {width: 4, height: 4};
 	var game = new TwentyFortyEight(size);
 	console.log(game.serialize());
+	// game.move(2); //down
+	// console.log(game.serialize());
 }
 
 function testMerge() {

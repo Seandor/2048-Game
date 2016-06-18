@@ -6,6 +6,9 @@ function GuiProcess (canvas, twentyFortyEight) {
 	this.context = canvas.getContext("2d");
 	this.game = twentyFortyEight;
 	this.grid = this.game.grid;
+
+	this.inputManager = new InputManager();
+	this.inputManager.on("move", this.move.bind(this));
 	this.init();
 }
 
@@ -121,6 +124,15 @@ GuiProcess.prototype.setBoardSize = function () {
 	var rows = this.game.getBoardHeight();
 	this.canvas.width = cols * this.tileSize + (cols + 1) * this.padding;
 	this.canvas.height = rows * this.tileSize + (rows + 1) * this.padding;
+};
+
+
+GuiProcess.prototype.move = function (direction) {
+	var moved = this.game.move(direction);
+	if (moved) {
+		// update board
+		this.drawAllTile();
+	}
 };
 
 // round rectangle path

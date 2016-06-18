@@ -52,9 +52,11 @@ Grid.prototype.traverseAndSetTile = function(startPos, directionVector, numSteps
 		col = startPos.col + i * directionVector.col;
 		if (mergedLine[i] !== null) {
 			position = {row: row, col: col};
-			value = merged[i];
+			value = mergedLine[i];
 			tile = new Tile(position, value);
 			this.setTile(tile);
+		} else {
+			this.cells[row][col] = null;
 		}
 	}
 };
