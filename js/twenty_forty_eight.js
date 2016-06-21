@@ -1,8 +1,14 @@
-function TwentyFortyEight (size) {
+function TwentyFortyEight (canvas, size) {
 	// width and height is measured by tile
 	this.boardWidth 	= size.width;
 	this.boardHeight 	= size.height;
 	this.startTiles 	= 2;
+	this.grid 	= new Grid(this.boardWidth, this.boardHeight);
+
+	this.inputManager 	= new InputManager();
+	this.guiProcess		= new GuiProcess(canvas, size);
+
+	this.inputManager.on("move", this.move.bind(this));
 	this.reset();
 }
 
@@ -11,6 +17,8 @@ TwentyFortyEight.prototype.reset = function () {
 	this.score 	= 0;
 	this.won	= false;
 	this.addStartTiles();
+	// notify the gui module
+	this.guiProcess.drawAllTiles(this.grid);
 };
 
 TwentyFortyEight.prototype.getBoardWidth = function () {
@@ -78,9 +86,10 @@ TwentyFortyEight.prototype.move = function (direction) {
 	}
 
 	if (merged) {
-		this.newTile();
+		self.newTile();
+		// notify the gui module
+		self.guiProcess.drawAllTiles(self.grid);
 	}
-	return merged;
 };
 
 // return a merged list

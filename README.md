@@ -10,3 +10,4 @@ Develop note:
  - [X] using canvas to draw the game board.
  - [X] null + null === 0
  - [ ] have to understand callback function 
+ - [x] using Object to store key value pairs can do the same thing as the 'which' or 'if else' statement.

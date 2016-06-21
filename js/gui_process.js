@@ -1,27 +1,20 @@
 // handle the gui part of the game
 // positions are in a form like this:
 // 
-function GuiProcess (canvas, twentyFortyEight) {
-	this.canvas = canvas;
-	this.context = canvas.getContext("2d");
-	this.game = twentyFortyEight;
-	this.grid = this.game.grid;
-
-	this.inputManager = new InputManager();
-	this.inputManager.on("move", this.move.bind(this));
-	this.init();
-}
-
-GuiProcess.prototype.init = function () {
+function GuiProcess (canvas, size) {
+	this.canvas 	= canvas;
+	this.context 	= canvas.getContext("2d");
+	this.size 		= size;
 
 	this.tileSize   = 100;
 	this.padding   	= Math.round(this.tileSize / 7);
 	this.radius 	= 5;
 	this.backgroundColor = "#BBADA0";
-	this.setBoardSize();
+	
+	this.setBoardSize(this.size);
 	this.drawBoard();
-	this.drawAllTile();
-};
+}
+
 
 GuiProcess.prototype.drawBoard = function () {
 	var ctx = this.context;
@@ -32,9 +25,9 @@ GuiProcess.prototype.drawBoard = function () {
 	ctx.restore();
 };
 
-GuiProcess.prototype.drawAllTile = function () {
+// draw all tiles depending on the grid
+GuiProcess.prototype.drawAllTiles = function (grid) {
 	var self = this;
-	var grid = self.grid;
 	var pos;
 	var value;
 	grid.eachCell(function (row, col, tile) {
@@ -119,20 +112,11 @@ GuiProcess.prototype.getTileColor = function (tileValue) {
 	return COLORS[value];
 };
 
-GuiProcess.prototype.setBoardSize = function () {
-	var cols = this.game.getBoardWidth();
-	var rows = this.game.getBoardHeight();
+GuiProcess.prototype.setBoardSize = function (size) {
+	var cols = size.width;
+	var rows = size.height;
 	this.canvas.width = cols * this.tileSize + (cols + 1) * this.padding;
 	this.canvas.height = rows * this.tileSize + (rows + 1) * this.padding;
-};
-
-
-GuiProcess.prototype.move = function (direction) {
-	var moved = this.game.move(direction);
-	if (moved) {
-		// update board
-		this.drawAllTile();
-	}
 };
 
 // round rectangle path

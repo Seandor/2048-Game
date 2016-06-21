@@ -26,6 +26,13 @@ Grid.prototype.init = function () {
 	return cells;
 };
 
+Grid.prototype.getWidth = function () {
+	return this.gridWidth;
+};
+
+Grid.prototype.getHeight = function () {
+	return this.gridHeight;
+};
 // Given a direction vector and start cell to traverse the grid
 // return the traversal list
 Grid.prototype.traverse = function(startPos, directionVector, numSteps) {
