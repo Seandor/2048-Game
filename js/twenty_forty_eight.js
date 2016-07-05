@@ -6,7 +6,7 @@ function TwentyFortyEight (canvas, size) {
 	this.grid 	= new Grid(this.boardWidth, this.boardHeight);
 
 	this.inputManager 	= new InputManager();
-	this.guiProcess		= new GuiProcess(canvas, size);
+	this.guiManager		= new GuiManager(canvas, size);
 
 	this.inputManager.on("move", this.move.bind(this));
 	this.reset();
@@ -18,7 +18,7 @@ TwentyFortyEight.prototype.reset = function () {
 	this.won	= false;
 	this.addStartTiles();
 	// notify the gui module
-	this.guiProcess.drawAllTiles(this.grid);
+	this.guiManager.drawAllTiles(this.grid);
 };
 
 TwentyFortyEight.prototype.getBoardWidth = function () {
@@ -27,6 +27,10 @@ TwentyFortyEight.prototype.getBoardWidth = function () {
 
 TwentyFortyEight.prototype.getBoardHeight = function () {
 	return this.boardHeight;
+};
+
+TwentyFortyEight.prototype.isGameTerminated = function ()  {
+	return this.won;
 };
 
 TwentyFortyEight.prototype.addStartTiles = function () {
@@ -79,22 +83,35 @@ TwentyFortyEight.prototype.move = function (direction) {
 			continue;
 		} else {
 			merged = true;
+			// set merged tile 
+			self.grid.traverseAndSetTile(tileIndices[idx], directionVector, traversalSteps, mergedLine);
 		}
-
-		// set merged tile 
-		self.grid.traverseAndSetTile(tileIndices[idx], directionVector, traversalSteps, mergedLine);
 	}
 
 	if (merged) {
-		self.newTile();
+		console.log("Score is: " + self.score);
+		if (self.isGameTerminated()) {
+			console.log("Congratulations! You Won!");
+		} else {
+			self.newTile();
+		}
 		// notify the gui module
-		self.guiProcess.drawAllTiles(self.grid);
+		self.guiManager.drawAllTiles(self.grid);
+	} else {
+		if (!self.movesAvailable()) {
+			console.log("game over!");
+		}
 	}
+};
+
+TwentyFortyEight.prototype.movesAvailable = function () {
+	return this.grid.randomAvailableCells();
 };
 
 // return a merged list
 TwentyFortyEight.prototype.merge = function (line) {
-	var mergedLine = this.slide(line);
+	var self = this;
+	var mergedLine = self.slide(line);
 	for (var idx = 0; idx < mergedLine.length; idx++) {
 		if (mergedLine[idx] === null) {
 			continue;
@@ -102,9 +119,13 @@ TwentyFortyEight.prototype.merge = function (line) {
 		if (idx < (mergedLine.length - 1) && mergedLine[idx] === mergedLine[idx+1]) {
 			mergedLine[idx] += mergedLine[idx];
 			mergedLine[idx+1] = null;
+			// add score
+			self.score += mergedLine[idx];
+			// game terminated condition
+			if (mergedLine[idx] === 2048) self.won = true;
 		}
 	}
-	return this.slide(mergedLine);
+	return self.slide(mergedLine);
 };
 
 // used only in merge function
@@ -178,22 +199,3 @@ TwentyFortyEight.prototype.serialize = function () {
 	return this.grid.serialize();
 };
 
-function testGame() {
-	var size = {width: 4, height: 4};
-	var game = new TwentyFortyEight(size);
-	console.log(game.serialize());
-	// game.move(2); //down
-	// console.log(game.serialize());
-}
-
-function testMerge() {
-	var size = {width: 4, height: 4};
-	var game = new TwentyFortyEight(size);
-	var suite = new TestSuite();
-	suite.runTest(game.merge([2, null, 2, 2]), [4, 2, null, null], "Case 1: ");
-	suite.runTest(game.merge([null, null, 2, 2]), [4, null, null, null], "Case 2: ");
-	suite.runTest(game.merge([2, 2, null, null]), [4, null, null, null], "Case 3: ");
-	suite.runTest(game.merge([2, 2, 2, 2, 2]), [4, 4, 2, null, null], "Case 4: ");
-	suite.runTest(game.merge([8, 16, 16, 8]), [8, 32, 8, null], "Case 5: ");
-	suite.reportResults();
-}

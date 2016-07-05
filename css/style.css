@@ -1,3 +1,8 @@
+body, h1 {
+	margin: 0;
+	padding: 0;
+}
+
 body {
 	background-color: #FAF8EF;
 }
@@ -5,5 +10,13 @@ body {
 .container {
 	width: 600px;
 	margin: 100px auto;
-	text-align: center;
+}
+
+h1 {
+	margin-bottom: 20px;
+	font-size: 60px;
+	color: #776E65;
+}
+
+.canvas-wrapper {
 }

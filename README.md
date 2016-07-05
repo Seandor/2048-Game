@@ -1,13 +1,8 @@
 # 2048
 
-A clone of 2048 with a little variant.
+2048复刻。
 
-Doing this mini-project for only two purposes, one is to practice more with the origin javascript, the other reason is that I could learn more about programming.
+做这个小项目主要有两个目的，一是能够让我更多地使用原生javascript，二是能学习更多的编程技巧。
 
-Develop note:
+[开发手记](https://github.com/Seandor/2048-Game/blob/master/developer_notes.md)
 
- - [X] add icon
- - [X] using canvas to draw the game board.
- - [X] null + null === 0
- - [ ] have to understand callback function 
- - [x] using Object to store key value pairs can do the same thing as the 'which' or 'if else' statement.
