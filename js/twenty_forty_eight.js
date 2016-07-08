@@ -9,6 +9,9 @@ function TwentyFortyEight (canvas, size) {
 	this.guiManager		= new GuiManager(canvas, size);
 
 	this.inputManager.on("move", this.move.bind(this));
+	this.inputManager.on("newgame", this.reset.bind(this));
+
+	this.best 			= 0;
 	this.reset();
 }
 
@@ -18,6 +21,7 @@ TwentyFortyEight.prototype.reset = function () {
 	this.won	= false;
 	this.addStartTiles();
 	// notify the gui module
+	this.guiManager.updateScore(this.score);
 	this.guiManager.drawAllTiles(this.grid);
 };
 
@@ -89,7 +93,11 @@ TwentyFortyEight.prototype.move = function (direction) {
 	}
 
 	if (merged) {
-		console.log("Score is: " + self.score);
+		if (self.score > self.best) {
+			self.best = self.score;
+			self.guiManager.updateBest(self.best);
+		}
+		self.guiManager.updateScore(self.score);
 		if (self.isGameTerminated()) {
 			console.log("Congratulations! You Won!");
 		} else {
@@ -98,6 +106,7 @@ TwentyFortyEight.prototype.move = function (direction) {
 		// notify the gui module
 		self.guiManager.drawAllTiles(self.grid);
 	} else {
+		// need to fix the bug here
 		if (!self.movesAvailable()) {
 			console.log("game over!");
 		}
@@ -198,4 +207,3 @@ TwentyFortyEight.prototype.isEqualArray = function (arr1, arr2) {
 TwentyFortyEight.prototype.serialize = function () {
 	return this.grid.serialize();
 };
-

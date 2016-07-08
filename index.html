@@ -1,13 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
 	<title>2048</title>
 	<link rel="shortcut icon" href="/favicon.ico">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 	<div class="container">
-		<h1>2048</h1>
+		<div class="heading">
+			<h1>2048</h1>
+			<div class="score-container">
+				<div class="score">0</div>
+				<div class="best">0</div>
+			</div>
+		</div>
+		<div class="above-game">
+			<p class="description">Join the numbers to get <strong>2048 tile!</strong></p>
+			<a class="new-game">New Game</a>
+		</div>		
 		<div class="canvas-wrapper">
 			<canvas id="game-container">
 				Your browser doesn't support canvas.

@@ -49,4 +49,8 @@ InputManager.prototype.listen = function () {
 			}
 		}
 	});
+
+	document.querySelector(".new-game").addEventListener("click", function () {
+		self.emit("newgame");
+	});
 };

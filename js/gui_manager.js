@@ -11,7 +11,7 @@ function GuiManager (canvas, size) {
 	this.radius 	= 10;
 	this.backgroundColor = "#BBADA0";
 	
-	this.setBoardSize(this.size);
+	this.setCanvasSize(this.size);
 	this.drawBoard();
 }
 
@@ -19,7 +19,7 @@ function GuiManager (canvas, size) {
 GuiManager.prototype.drawBoard = function () {
 	var ctx = this.context;
 	ctx.save();
-	this.roundRect(0, 0, this.canvas.width, this.canvas.height, this.radius);
+	this.roundRect(0, 0, this.oriWidth, this.oriHeight, this.radius);
 	ctx.fillStyle = this.backgroundColor;
 	ctx.fill();
 	ctx.restore();
@@ -62,8 +62,11 @@ GuiManager.prototype.drawTileBackground = function (position, value) {
 	var ctx = this.context;
 	var size = this.tileSize;
 	ctx.save();
-	// clear previous drawing
-	// this.clearRoundRect(position.x, position.y, size, size, this.radius);
+	// clear previous drawing add draw default color
+	ctx.clearRect(position.x, position.y, size, size);
+	ctx.fillStyle = this.backgroundColor;
+	ctx.fillRect(position.x, position.y, size, size);
+
 	this.roundRect(position.x, position.y, size, size, this.radius);
 	ctx.fillStyle = this.getTileColor(value);
 	ctx.fill();
@@ -114,20 +117,49 @@ GuiManager.prototype.getTileColor = function (tileValue) {
 	return COLORS[value];
 };
 
-GuiManager.prototype.setBoardSize = function (size) {
-	var cols = size.width;
-	var rows = size.height;
-	this.canvas.width = cols * this.tileSize + (cols + 1) * this.padding;
-	this.canvas.height = rows * this.tileSize + (rows + 1) * this.padding;
+GuiManager.prototype.setCanvasSize = function (size) {
+	var self = this,
+		cols = size.width,
+		rows = size.height;
+	// set canvas size
+	self.canvas.width = cols * self.tileSize + (cols + 1) * self.padding;
+	self.canvas.height = rows * self.tileSize + (rows + 1) * self.padding;
+
+	// save the origin width and height for rendering
+	self.oriWidth = self.canvas.width;
+	self.oriHeight = self.canvas.height;
+
+	// query the various pixel ratios
+	var devicePixelRatio 	= Math.floor(window.devicePixelRatio) || 1,
+	 	backingStoreRatio 	= self.context.webkitBackingStorePixelRatio ||
+	                     	  self.context.mozBackingStorePixelRatio ||
+	                     	  self.context.msBackingStorePixelRatio ||
+	                          self.context.oBackingStorePixelRatio ||
+	                          self.context.backingStorePixelRatio || 1,
+	 	ratio = devicePixelRatio / backingStoreRatio;
+
+	// upscale the canvas if the two ratios don't match
+	if (devicePixelRatio !== backingStoreRatio) {
+		self.canvas.width = self.oriWidth * ratio;
+		self.canvas.height = self.oriHeight * ratio;
+
+		self.canvas.style.width = self.oriWidth + 'px';
+		self.canvas.style.height = self.oriHeight + 'px';
+
+		// now scale the context to counter
+		// the fact that we've manually scaled
+		// our canvas element
+		self.context.scale(ratio, ratio);
+	}
 };
 
-GuiManager.prototype.clearRoundRect = function (startX, startY, width, height, radius) {
-	var ctx = this.context;
-	this.roundRect(startX, startY, width, height, this.radius);
-	ctx.save();
-	ctx.fillStyle = "#fff";
-	ctx.fill();
-	ctx.restore();
+// Score
+GuiManager.prototype.updateScore = function (score) {
+	document.querySelector(".score").textContent = score;
+};
+
+GuiManager.prototype.updateBest = function (best) {
+	document.querySelector(".best").textContent = best;
 };
 
 // round rectangle path
