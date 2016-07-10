@@ -1,7 +1,13 @@
+@import url(fonts/clear-sans.css);
 .clearfix {
   content: "";
   display: block;
   clear: both;
+}
+html,
+body {
+  font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 18px;
 }
 body {
   margin-top: 80px;
@@ -16,7 +22,7 @@ body {
 .heading h1 {
   margin: 0px auto;
   padding: 0px 0px;
-  font-size: 60px;
+  font-size: 66px;
   font-weight: bold;
   color: #8F7A66;
   display: block;

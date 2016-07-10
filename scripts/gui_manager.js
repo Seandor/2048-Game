@@ -69,7 +69,7 @@ GuiManager.prototype.drawTileBackground = function (position, value) {
 	ctx.fillRect(position.x, position.y, size, size);
 
 	this.roundRect(position.x, position.y, size, size, this.radius);
-	ctx.fillStyle = this.getTileColor(value);
+	ctx.fillStyle = this.getTileColor(value) ? this.getTileColor(value) : "#000";
 	ctx.fill();
 	ctx.restore();
 };
@@ -79,7 +79,7 @@ GuiManager.prototype.drawTileText = function (textPosition, value) {
 	var fillColor;
 	ctx.save();
 	// need to fix the font size later
-	ctx.font="40px Helvetica bold";
+	ctx.font="bold 40px 'Clear Sans'";
 	ctx.fillStyle = this.getTextColor(value);
 	ctx.textBaseline="middle";
 	ctx.textAlign = "center";
