@@ -1,9 +1,10 @@
 function testGame() {
 	var size = {width: 4, height: 4};
 	var game = new TwentyFortyEight(size);
-	console.log(game.serialize());
+	// console.log(game.serialize());
 	// game.move(2); //down
 	// console.log(game.serialize());
+	game.tileMatchesAvailable();
 }
 
 function testMerge() {

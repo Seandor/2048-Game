@@ -1,4 +1,4 @@
-function TwentyFortyEight (canvas, size) {
+function TwentyFortyEight (size) {
 	// width and height is measured by tile
 	this.boardWidth 	= size.width;
 	this.boardHeight 	= size.height;
@@ -6,7 +6,7 @@ function TwentyFortyEight (canvas, size) {
 	this.grid 	= new Grid(this.boardWidth, this.boardHeight);
 
 	this.inputManager 	= new InputManager();
-	this.guiManager		= new GuiManager(canvas, size);
+	this.guiManager		= new GuiManager(size);
 
 	this.inputManager.on("move", this.move.bind(this));
 	this.inputManager.on("newgame", this.reset.bind(this));
@@ -19,8 +19,10 @@ TwentyFortyEight.prototype.reset = function () {
 	this.grid 	= new Grid(this.boardWidth, this.boardHeight);
 	this.score 	= 0;
 	this.won	= false;
+	this.over 	= false;
 	this.addStartTiles();
 	// notify the gui module
+	this.guiManager.init();
 	this.guiManager.updateScore(this.score);
 	this.guiManager.drawAllTiles(this.grid);
 };
@@ -34,7 +36,7 @@ TwentyFortyEight.prototype.getBoardHeight = function () {
 };
 
 TwentyFortyEight.prototype.isGameTerminated = function ()  {
-	return this.won;
+	return this.won || this.over;
 };
 
 TwentyFortyEight.prototype.addStartTiles = function () {
@@ -67,6 +69,10 @@ TwentyFortyEight.prototype.getVector = function (direction) {
 TwentyFortyEight.prototype.move = function (direction) {
 	// 0: UP 1: RIGHT 2: DOWN 3: LEFT
 	var self = this;
+	if (self.isGameTerminated()) {
+		console.log("game over");
+	}
+
 	var merged = false;
 
 	var traversalSteps;
@@ -98,23 +104,40 @@ TwentyFortyEight.prototype.move = function (direction) {
 			self.guiManager.updateBest(self.best);
 		}
 		self.guiManager.updateScore(self.score);
-		if (self.isGameTerminated()) {
-			console.log("Congratulations! You Won!");
-		} else {
-			self.newTile();
-		}
+		self.newTile();
 		// notify the gui module
 		self.guiManager.drawAllTiles(self.grid);
-	} else {
-		// need to fix the bug here
-		if (!self.movesAvailable()) {
-			console.log("game over!");
-		}
+	} 
+
+	if (!self.movesAvailable()) {
+		this.over = true; //game over
 	}
 };
 
 TwentyFortyEight.prototype.movesAvailable = function () {
-	return this.grid.randomAvailableCells();
+	return this.grid.cellsAvailable() || this.tileMatchesAvailable();
+};
+
+TwentyFortyEight.prototype.tileMatchesAvailable = function () {
+	var self = this;
+
+	var tile;
+
+	for (var row = 0; row < self.grid.gridHeight; row++) {
+		for (var col = 0; col < self.grid.gridWidth; col++) {
+			tile = self.grid.cells[row] [col];
+			if (tile) {
+				for (var direction = 0; direction < 4; direction++) {
+					var vector = self.getVector(direction);
+					var otherPosition = {row: row + vector.row, col: col + vector.col};
+					var other = self.grid.getTile(otherPosition);
+					if (other && other.value === tile.value) {
+						return true; // Matches available
+					}
+				}
+			}
+		}
+	}
 };
 
 // return a merged list
@@ -130,7 +153,7 @@ TwentyFortyEight.prototype.merge = function (line) {
 			mergedLine[idx+1] = null;
 			// add score
 			self.score += mergedLine[idx];
-			// game terminated condition
+			// game won condition
 			if (mergedLine[idx] === 2048) self.won = true;
 		}
 	}

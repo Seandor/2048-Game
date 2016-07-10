@@ -87,6 +87,17 @@ Grid.prototype.availableCells = function () {
 	return cells;
 };
 
+// Return true if there is cell available
+Grid.prototype.cellsAvailable = function () {
+	for (var row = 0; row < this.gridHeight; row++) {
+		for (var col = 0; col < this.gridWidth; col++) {
+			if (!this.cells[row][col]) {
+				return true;
+			}
+		}
+	}
+};
+
 // iteration of the grid 
 Grid.prototype.eachCell = function (callback) {
 	for (var row = 0; row < this.gridHeight; row++) {
@@ -102,7 +113,16 @@ Grid.prototype.setTile = function (tile) {
 
 // return null if there is no tile
 Grid.prototype.getTile = function (position) {
-	return this.cells[position.row][position.col];
+	if (this.withinBounds(position)) {
+		return this.cells[position.row][position.col];
+	} else {
+		return null;
+	}	
+};
+
+Grid.prototype.withinBounds = function (position) {
+	return position.row >= 0 && position.row < this.gridHeight &&
+		   position.col >= 0 && position.col < this.gridWidth;
 };
 
 Grid.prototype.serialize = function () {

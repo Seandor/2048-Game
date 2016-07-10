@@ -1,20 +1,21 @@
 // handle the gui part of the game
-// positions are in a form like this:
-// 
-function GuiManager (canvas, size) {
-	this.canvas 	= canvas;
-	this.context 	= canvas.getContext("2d");
+
+function GuiManager (size) {
+	this.canvas 	= document.getElementById("game-container");
+	this.context 	= this.canvas.getContext("2d");
 	this.size 		= size;
 
 	this.tileSize   = 100;
 	this.padding   	= Math.round(this.tileSize / 7);
 	this.radius 	= 10;
 	this.backgroundColor = "#BBADA0";
-	
-	this.setCanvasSize(this.size);
-	this.drawBoard();
 }
 
+
+GuiManager.prototype.init = function () {
+	this.setCanvasSize(this.size);
+	this.drawBoard();
+};
 
 GuiManager.prototype.drawBoard = function () {
 	var ctx = this.context;
@@ -121,16 +122,12 @@ GuiManager.prototype.setCanvasSize = function (size) {
 	var self = this,
 		cols = size.width,
 		rows = size.height;
-	// set canvas size
-	self.canvas.width = cols * self.tileSize + (cols + 1) * self.padding;
-	self.canvas.height = rows * self.tileSize + (rows + 1) * self.padding;
-
-	// save the origin width and height for rendering
-	self.oriWidth = self.canvas.width;
-	self.oriHeight = self.canvas.height;
+	// set original size
+	self.oriWidth = cols * self.tileSize + (cols + 1) * self.padding;
+	self.oriHeight  = rows * self.tileSize + (rows + 1) * self.padding;
 
 	// query the various pixel ratios
-	var devicePixelRatio 	= Math.floor(window.devicePixelRatio) || 1,
+	var devicePixelRatio 	= Math.ceil(window.devicePixelRatio) || 1,
 	 	backingStoreRatio 	= self.context.webkitBackingStorePixelRatio ||
 	                     	  self.context.mozBackingStorePixelRatio ||
 	                     	  self.context.msBackingStorePixelRatio ||
@@ -138,11 +135,10 @@ GuiManager.prototype.setCanvasSize = function (size) {
 	                          self.context.backingStorePixelRatio || 1,
 	 	ratio = devicePixelRatio / backingStoreRatio;
 
+	self.canvas.width = self.oriWidth * ratio;
+	self.canvas.height = self.oriHeight * ratio;
 	// upscale the canvas if the two ratios don't match
 	if (devicePixelRatio !== backingStoreRatio) {
-		self.canvas.width = self.oriWidth * ratio;
-		self.canvas.height = self.oriHeight * ratio;
-
 		self.canvas.style.width = self.oriWidth + 'px';
 		self.canvas.style.height = self.oriHeight + 'px';
 
