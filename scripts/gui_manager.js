@@ -77,14 +77,26 @@ GuiManager.prototype.drawTileBackground = function (position, value) {
 GuiManager.prototype.drawTileText = function (textPosition, value) {
 	var ctx = this.context;
 	var fillColor;
+	var tileTextSize = this.getTileTextSize(value) + "px";
 	ctx.save();
 	// need to fix the font size later
-	ctx.font="bold 40px 'Clear Sans'";
+	ctx.font="bold " + tileTextSize + " Clear Sans";
 	ctx.fillStyle = this.getTextColor(value);
 	ctx.textBaseline="middle";
 	ctx.textAlign = "center";
 	ctx.fillText(value, textPosition.x, textPosition.y);
 	ctx.restore();
+};
+
+// tile text size is responsive to its value
+// since it is very hard to reach 2048, no to 
+// mention to get a 5 digit number :D
+GuiManager.prototype.getTileTextSize = function (value) {
+	var SIZEDIC = { 1: 54,
+					2: 48,
+					3: 40,
+					4: 35 };
+	return SIZEDIC[value.toString().length];
 };
 
 // get tile text color
