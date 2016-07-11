@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
 	<title>2048</title>
-	<link rel="shortcut icon" href="/favicon.ico">
+	<link rel="shortcut icon" href="favicon.ico">
 	<link rel="stylesheet" type="text/css" href="style/style.css">
 </head>
 <body>
@@ -22,8 +22,14 @@
 			<p class="description">Join the numbers to get <strong>2048 tile!</strong></p>
 			<a class="new-game">New Game</a>
 		</div>		
-		<div class="canvas-wrapper">
-			<canvas id="game-container">
+		<div class="game-container">
+			<div class="game-message">
+				<p></p>
+				<div>
+					<a class="retry-button">Try again</a>
+				</div>
+			</div>
+			<canvas id="game-board">
 				Your browser doesn't support canvas.
 			</canvas>
 		</div>

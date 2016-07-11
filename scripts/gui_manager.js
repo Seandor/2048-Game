@@ -1,7 +1,7 @@
 // handle the gui part of the game
 
 function GuiManager (size) {
-	this.canvas 	= document.getElementById("game-container");
+	this.canvas 	= document.getElementById("game-board");
 	this.context 	= this.canvas.getContext("2d");
 	this.size 		= size;
 
@@ -149,6 +149,12 @@ GuiManager.prototype.setCanvasSize = function (size) {
 	}
 };
 
+GuiManager.prototype.getGameMessage = function (state) {
+	var MESSAGE = { 0: {text: "Game Over!", class: "game-over"},
+					1: {text: "You Won!", class: "game-won"}};
+	return MESSAGE[state];
+};
+
 // Score
 GuiManager.prototype.updateScore = function (score) {
 	document.querySelector(".score").textContent = score;
@@ -156,6 +162,18 @@ GuiManager.prototype.updateScore = function (score) {
 
 GuiManager.prototype.updateBest = function (best) {
 	document.querySelector(".best").textContent = best;
+};
+
+GuiManager.prototype.showGameMessage = function (state) {
+	// 0: lose  1: won
+	var message = this.getGameMessage(state);
+	document.querySelector(".game-message p").textContent = message.text;
+	document.querySelector(".game-message").classList.add(message.class);
+};
+
+GuiManager.prototype.clearGameMessage = function () {
+	document.querySelector(".game-message p").textContent = "";
+	document.querySelector(".game-message").className = "game-message";
 };
 
 // round rectangle path

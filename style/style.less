@@ -31,6 +31,10 @@ body {
 	color: @dark-gray;
 }
 
+p {
+	.zero-margin();
+}
+
 .container {
 	.zero-margin();
 	width: @container-width;
@@ -112,6 +116,58 @@ body {
 	.clearfix();
 }
 
-.canvas-wrapper {
+.game-container {
 	margin-top: 20px;
+	position: relative;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+.game-container .game-message {
+	display: none;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(238, 228, 218, 0.5);
+	z-index: 100;
+	text-align: center;
+	-webkit-animation: fade-in 800ms ease 1200ms;
+	-moz-animation: fade-in 800ms ease 1200ms;
+	animation: fade-in 800ms ease 1200ms;
+	-webkit-animation-fill-mode: both;
+	-moz-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+.game-container .game-message p {
+	font-size: 44px;
+	font-weight: bold;
+	height: 44px;
+	line-height: 44px;
+	margin-top: 180px;
+}
+
+.game-container .game-message a {
+	margin-top: 20px;
+	padding: 0px 20px;
+	display: inline-block;
+	border-radius: 3px;
+	text-decoration: none;
+	background-color: @dark-gray;
+	line-height: @line-height;
+	font-weight: bold;
+	cursor: pointer;
+	color: white;
+}
+
+.game-container .game-message.game-over, 
+.game-container .game-message.game-won {
+	display: block;
 }

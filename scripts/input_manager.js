@@ -53,4 +53,8 @@ InputManager.prototype.listen = function () {
 	document.querySelector(".new-game").addEventListener("click", function () {
 		self.emit("newgame");
 	});
+
+	document.querySelector(".retry-button").addEventListener("click", function () {
+		self.emit("newgame");
+	});
 };

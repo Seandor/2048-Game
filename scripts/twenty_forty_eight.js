@@ -24,6 +24,7 @@ TwentyFortyEight.prototype.reset = function () {
 	// notify the gui module
 	this.guiManager.init();
 	this.guiManager.updateScore(this.score);
+	this.guiManager.clearGameMessage();
 	this.guiManager.drawAllTiles(this.grid);
 };
 
@@ -71,6 +72,7 @@ TwentyFortyEight.prototype.move = function (direction) {
 	var self = this;
 	if (self.isGameTerminated()) {
 		console.log("game over");
+		return;
 	}
 
 	var merged = false;
@@ -110,7 +112,19 @@ TwentyFortyEight.prototype.move = function (direction) {
 	} 
 
 	if (!self.movesAvailable()) {
-		this.over = true; //game over
+		self.over = true; //game over
+	}
+
+	if (self.isGameTerminated()) {
+		console.log("game over");
+		var state;
+		if (self.over) {
+			state = 0;
+		}
+		if (self.won) {
+			state = 1;
+		}
+		self.guiManager.showGameMessage(state);
 	}
 };
 
