@@ -120,6 +120,7 @@ p {
   background: rgba(238, 228, 218, 0.5);
   z-index: 100;
   text-align: center;
+  border-radius: 10px;
   -webkit-animation: fade-in 800ms ease 1200ms;
   -moz-animation: fade-in 800ms ease 1200ms;
   animation: fade-in 800ms ease 1200ms;
