@@ -12,9 +12,16 @@ function GuiManager (size) {
 }
 
 
-GuiManager.prototype.init = function () {
+GuiManager.prototype.setupStage = function () {
 	this.setCanvasSize(this.size);
 	this.drawBoard();
+};
+
+GuiManager.prototype.reset = function (grid) {
+	this.setupStage();
+	this.updateScore(0);
+	this.clearGameMessage();
+	this.draw(grid);
 };
 
 GuiManager.prototype.drawBoard = function () {
@@ -27,14 +34,13 @@ GuiManager.prototype.drawBoard = function () {
 };
 
 // draw all tiles depending on the grid
-GuiManager.prototype.drawAllTiles = function (grid) {
+GuiManager.prototype.draw = function (grid) {
 	var self = this;
 	var pos;
-	var value;
+
 	grid.eachCell(function (row, col, tile) {
 		pos = self.calculatePosition(row, col);
-		value = tile ? tile.value : null;
-		self.drawTile(pos, value);
+		self.drawTile(pos, tile);
 	});
 };
 
@@ -48,7 +54,8 @@ GuiManager.prototype.calculatePosition = function (row, col) {
 	};
 };
 
-GuiManager.prototype.drawTile = function (position, value) {
+GuiManager.prototype.drawTile = function (position, tile) {
+	var value = tile ? tile.value : null;
 	var textPosition = {
 		x: position.x + this.tileSize / 2,
 		y: position.y + this.tileSize / 2
@@ -161,6 +168,7 @@ GuiManager.prototype.setCanvasSize = function (size) {
 	}
 };
 
+// html change
 GuiManager.prototype.getGameMessage = function (state) {
 	var MESSAGE = { 0: {text: "Game Over!", class: "game-over"},
 					1: {text: "You Won!", class: "game-won"}};

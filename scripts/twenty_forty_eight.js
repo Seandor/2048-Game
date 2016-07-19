@@ -3,7 +3,6 @@ function TwentyFortyEight (size) {
 	this.boardWidth 	= size.width;
 	this.boardHeight 	= size.height;
 	this.startTiles 	= 2;
-	this.grid 	= new Grid(this.boardWidth, this.boardHeight);
 
 	this.inputManager 	= new InputManager();
 	this.guiManager		= new GuiManager(size);
@@ -22,10 +21,7 @@ TwentyFortyEight.prototype.reset = function () {
 	this.over 	= false;
 	this.addStartTiles();
 	// notify the gui module
-	this.guiManager.init();
-	this.guiManager.updateScore(this.score);
-	this.guiManager.clearGameMessage();
-	this.guiManager.drawAllTiles(this.grid);
+	this.guiManager.reset(this.grid);
 };
 
 TwentyFortyEight.prototype.getBoardWidth = function () {
@@ -89,11 +85,10 @@ TwentyFortyEight.prototype.move = function (direction) {
 	var mergedLine;
 
 	for (var idx = 0; idx < tileIndices.length; idx++) {
-		traversals = self.grid.traverse(tileIndices[idx], directionVector, traversalSteps);
+		traversals = self.grid.traverseAndSetTile(tileIndices[idx], directionVector, traversalSteps);
 		mergedLine = self.merge(traversals);
-		if (self.isEqualArray(traversals, mergedLine)) {
-			continue;
-		} else {
+		// need to think twice
+		if (traversals.toString() !== mergedLine.toString()) {
 			merged = true;
 			// set merged tile 
 			self.grid.traverseAndSetTile(tileIndices[idx], directionVector, traversalSteps, mergedLine);
@@ -108,7 +103,7 @@ TwentyFortyEight.prototype.move = function (direction) {
 		self.guiManager.updateScore(self.score);
 		self.newTile();
 		// notify the gui module
-		self.guiManager.drawAllTiles(self.grid);
+		self.guiManager.draw(self.grid);
 	} 
 
 	if (!self.movesAvailable()) {
@@ -154,28 +149,38 @@ TwentyFortyEight.prototype.tileMatchesAvailable = function () {
 	}
 };
 
-// return a merged list
+// take a list of tiles return a merged list of tiles 
+// the tiles remembers which tile has merged to it but doesn't know its current position
 TwentyFortyEight.prototype.merge = function (line) {
 	var self = this;
 	var mergedLine = self.slide(line);
+	var currentValue;
+	var nextValue;
 	for (var idx = 0; idx < mergedLine.length; idx++) {
 		if (mergedLine[idx] === null) {
 			continue;
 		}
-		if (idx < (mergedLine.length - 1) && mergedLine[idx] === mergedLine[idx+1]) {
-			mergedLine[idx] += mergedLine[idx];
-			mergedLine[idx+1] = null;
-			// add score
-			self.score += mergedLine[idx];
-			// game won condition
-			if (mergedLine[idx] === 2048) self.won = true;
+
+		if (idx < (mergedLine.length - 1) ) {
+			currentValue = mergedLine[idx].value;
+			nextValue = mergedLine[idx+1] ? mergedLine[idx+1].value : null;
+			if (currentValue === nextValue) {
+				mergedLine[idx].mergedFrom = mergedLine[idx+1].getPosition();
+				mergedLine[idx].value  = mergedLine[idx].value + mergedLine[idx+1].value;
+				mergedLine[idx+1] = null;
+
+				// add score
+				self.score += mergedLine[idx].value;
+				// game won condition
+				if (mergedLine[idx].value === 2048) self.won = true; 
+			}
 		}
 	}
 	return self.slide(mergedLine);
 };
 
 // used only in merge function
-// to slide a list 
+// to slide a tile list 
 TwentyFortyEight.prototype.slide = function (line) {
 	var slidedLine = [];
 	var index = 0;
@@ -183,7 +188,7 @@ TwentyFortyEight.prototype.slide = function (line) {
 		slidedLine.push(null);
 	}
 	for (idx = 0; idx < line.length; idx++) {
-		if (line[idx] !== null) {
+		if (line[idx]) {
 			slidedLine[index] = line[idx];
 			index += 1;
 		}
@@ -227,18 +232,6 @@ TwentyFortyEight.prototype.getTileIndices = function (direction) {
 		3: leftList
 	};
 	return tileIndices[direction];
-};
-
-TwentyFortyEight.prototype.isEqualArray = function (arr1, arr2) {
-	if (arr1.length !== arr2.length) {
-		return false;
-	}
-	for (var idx = 0; idx < arr1.length; idx++) {
-		if (arr1[idx] !== arr2[idx]) {
-			return false;
-		}
-	}
-	return true;
 };
 
 TwentyFortyEight.prototype.serialize = function () {

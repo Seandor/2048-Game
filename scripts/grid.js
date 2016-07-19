@@ -33,39 +33,33 @@ Grid.prototype.getWidth = function () {
 Grid.prototype.getHeight = function () {
 	return this.gridHeight;
 };
-// Given a direction vector and start cell to traverse the grid
-// return the traversal list
-Grid.prototype.traverse = function(startPos, directionVector, numSteps) {
-	// 0: UP 1: RIGHT 2: DOWN 3: LEFT
-	var row, col;
-	var traversal = [];
-	for ( var i = 0; i < numSteps; i++ ) {
-		row = startPos.row + i * directionVector.row;
-		col = startPos.col + i * directionVector.col;
-		traversal.push(this.cells[row][col] ? this.cells[row][col].getValue() : null);
-	}
-	return traversal;
-};
 
+// Given a direction vector and start cell to traverse the grid
+// return a list of tiles
 Grid.prototype.traverseAndSetTile = function(startPos, directionVector, numSteps, mergedLine) {
 	// 0: UP 1: RIGHT 2: DOWN 3: LEFT
 	var row, col;
 	var traversal = [];
 	var position;
-	var value;
-	var tile;
 	for ( var i = 0; i < numSteps; i++ ) {
 		row = startPos.row + i * directionVector.row;
 		col = startPos.col + i * directionVector.col;
-		if (mergedLine[i] !== null) {
-			position = {row: row, col: col};
-			value = mergedLine[i];
-			tile = new Tile(position, value);
-			this.setTile(tile);
+		if (mergedLine === undefined) {
+			// only traverse
+			traversal.push(this.cells[row][col]);
 		} else {
-			this.cells[row][col] = null;
+			// set tile
+			if (mergedLine[i] !== null) {
+				position = {row: row, col: col};
+				mergedLine[i].savePosition();
+				mergedLine[i].updatePostion(position);
+				this.setTile(mergedLine[i]);
+			} else {
+				this.cells[row][col] = null;
+			}
 		}
 	}
+	return traversal;
 };
 
 // Find an available random cell position
