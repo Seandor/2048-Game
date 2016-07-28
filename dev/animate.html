@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)https://www.kirupa.com/html5/requestAnimationFrame_circles.htm -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <style>
+        #myCanvas {
+            border-width: 1px;
+            border-style: dotted;
+            border-color: Gray;
+        }
+
+        h1 {
+            font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+            font-size: x-large;
+            color: #999999;
+        }
+
+        body {
+            background-color: #FFF;
+            padding: 40px;
+        }
+
+        p {
+            font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+            font-size: 11px;
+        }
+
+        a {
+            color: #3E99CA;
+            text-decoration: none;
+        }
+
+        a:hover {
+            background-color: #E2F0F8;
+            border-radius: 2px;
+        }
+    </style>
+    <title>kirupa.com - It's Alive</title>
+<style>@-moz-keyframes nodeInserted{from{opacity:0.99;}to{opacity:1;}}@-webkit-keyframes nodeInserted{from{opacity:0.99;}to{opacity:1;}}@-o-keyframes nodeInserted{from{opacity:0.99;}to{opacity:1;}}@keyframes nodeInserted{from{opacity:0.99;}to{opacity:1;}}embed,object{animation-duration:.001s;-ms-animation-duration:.001s;-moz-animation-duration:.001s;-webkit-animation-duration:.001s;-o-animation-duration:.001s;animation-name:nodeInserted;-ms-animation-name:nodeInserted;-moz-animation-name:nodeInserted;-webkit-animation-name:nodeInserted;-o-animation-name:nodeInserted;}</style></head>
+
+<body data-pinterest-extension-installed="cr1.39.2">
+
+    <h1>It's Alive</h1>
+    <div id="container">
+        <canvas id="myCanvas" height="400" width="400"></canvas>
+    </div>
+    <script>
+
+        var mainCanvas = document.getElementById("myCanvas");
+        var mainContext = mainCanvas.getContext('2d');
+
+        var canvasWidth = mainCanvas.width;
+        var canvasHeight = mainCanvas.height;
+        
+        // depending on your browser, the right version of the rAF function will be returned...I hope
+        var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+        // this array contains a reference to every circle that you will create
+        var circles = new Array();
+
+        //
+        // The Circle "constructor" is responsible for creating the circle objects and defining the various properties
+        // they have
+        //
+        function Circle(angle, sign, radius, rotationRadius, initialX, initialY) {
+            this.angle = angle;
+            this.sign = sign;
+            this.radius = radius;
+            this.rotationRadius = rotationRadius;
+            this.initialX = initialX;
+            this.initialY = initialY;
+            this.incrementer = .01 + Math.random() * .1;
+        }
+
+        Circle.prototype.update = function () {
+
+            this.angle += this.incrementer;
+
+            this.currentX = this.initialX + this.rotationRadius * Math.cos(this.angle);
+            this.currentY = this.initialY + this.rotationRadius * Math.sin(this.angle);
+
+            if (this.angle >= (Math.PI * 2)) {
+                this.angle = 0;
+                this.incrementer = .01 + Math.random() * .1;
+            }
+
+            // The following code is responsible for actually drawing the circle on the screen
+            mainContext.beginPath();
+            mainContext.arc(this.currentX, this.currentY, this.radius, 0, Math.PI * 2, false);
+            mainContext.closePath();
+            mainContext.fillStyle = 'rgba(0, 51, 204, .1)';
+            mainContext.fill();
+        };
+
+        //
+        // This function creates the circles that you end up seeing
+        //
+        function createCircles() {
+        	// change the range of this loop to adjust the number of circles that you see
+            for (var i = 0; i < 50; i++) {
+                var radius = 5 + Math.random() * 40;
+                var initialX = canvasWidth / 2;
+                var initialY = canvasHeight / 2;
+                var rotationRadius = 1 + Math.random() * 30;
+                var angle = Math.random() * 2 * Math.PI;
+
+                var signHelper = Math.floor(Math.random() * 2);
+                var sign;
+
+                // Randomly specify whether the circle will be rotating clockwise or counterclockwise
+                if (signHelper == 1) {
+                    sign = -1;
+                } else {
+                    sign = 1;
+                }
+
+                // create the Circle object
+                var circle = new Circle(angle, sign, radius, rotationRadius, initialX, initialY);
+                circles.push(circle);
+            }
+            // call the draw function approximately 60 times a second
+            requestAnimationFrame(draw);
+        }
+        createCircles();
+
+        function draw() {
+            mainContext.clearRect(0, 0, canvasWidth, canvasHeight);
+            mainContext.fillStyle = '#F6F6F6';
+            mainContext.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            for (var i = 0; i < circles.length; i++) {
+                var circle = circles[i];
+                circle.update();
+            }
+            
+            // call the draw function again!
+            requestAnimationFrame(draw);
+        }
+    </script>
+	<p>This was created as part of the <a href="https://www.kirupa.com/">
+	requestAnimationFrame tutorial</a>.</p>
+
+
+
+</body></html>
